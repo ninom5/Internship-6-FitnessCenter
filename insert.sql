@@ -1,0 +1,28 @@
+INSERT INTO Countries (Name, Population, AverageSalary) VALUES
+('United States', 331002651, 65000),
+('China', 1439323776, 10500),
+('India', 1380004385, 2200),
+('Brazil', 212559417, 8700),
+('Russia', 145934462, 11500),
+('Japan', 126476461, 40000),
+('Germany', 83783942, 46000),
+('United Kingdom', 67886011, 42000),
+('France', 65273511, 41000),
+('Italy', 60461826, 35000),
+('Canada', 37742154, 52000),
+('South Korea', 51269185, 41000),
+('Australia', 25499884, 53000),
+('Spain', 46754778, 31000),
+('Mexico', 128932753, 9600),
+('Indonesia', 273523615, 3900),
+('Turkey', 84339067, 9500),
+('Saudi Arabia', 34813871, 21000),
+('South Africa', 59308690, 6200),
+('Argentina', 45195774, 9500),
+('Serbia', 6963764, 9000),
+('Croatia', 4047200, 14500),
+('Bosnia and Herzegovina', 3280819, 8500),
+('North Macedonia', 2083459, 7500),
+('Montenegro', 622359, 8800);
+
+
