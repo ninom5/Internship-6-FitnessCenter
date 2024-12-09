@@ -47,7 +47,7 @@ CREATE TABLE ActivityType(
 
 CREATE TABLE Activities(
 	ActivitiesId SERIAL PRIMARY KEY,
-	TypeOfActivity INT,
+	TypeOfActivityId INT CHECK (TypeOfActivityId BETWEEN 1 AND 5),
 	Price INT Check (Price > 0),
 	FOREIGN KEY (TypeOfActivity) REFERENCES ActivityType(ActivityTypeId)
 );
@@ -80,3 +80,5 @@ CREATE TABLE Schedule(
 	Capacity INT CHECK (Capacity > 0),
 	FOREIGN KEY (ActivityId) REFERENCES Activities(ActivitiesId)
 );
+ALTER TABLE Schedule
+	ADD CONSTRAINT CheckTime CHECK (StartingTime < EndingTime);
