@@ -25,6 +25,11 @@ CREATE TABLE Users(
 	FitnessCenterId INT,
 	FOREIGN KEY (FitnessCenterId) REFERENCES FitnessCenters(FitnessCentersId)
 );
+ALTER TABLE Users 
+	DROP CONSTRAINT users_gender_check;
+ALTER TABLE Users 
+	ADD CONSTRAINT gender_check CHECK (Gender IN ('M', 'F', 'U', 'R'));
+
 
 CREATE TABLE Trainers(
 	TrainersId SERIAL PRIMARY KEY,
@@ -39,6 +44,10 @@ CREATE TABLE Trainers(
 );
 ALTER TABLE Trainers
 	ADD CONSTRAINT UniqueNameSurnameFitness UNIQUE(Name, Surname, fitnesscenterid);
+ALTER TABLE Trainers 
+	DROP CONSTRAINT trainers_gender_check;
+ALTER TABLE Trainers 
+	ADD CONSTRAINT trainers_check CHECK (Gender IN ('M', 'F', 'U', 'R'));
 
 CREATE TABLE ActivityType(
 	ActivityTypeId SERIAL PRIMARY KEY,

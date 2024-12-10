@@ -1,7 +1,16 @@
 -- 1.UPIT
-SELECT t.name, t.surname, t.gender, c.name AS Country, c.averagesalary AS average_salary FROM Trainers t
-JOIN Countries c ON c.countriesid = t.countryid
-
+SELECT t.trainersid, t.name, t.surname, 
+    CASE 
+        WHEN t.gender = 'M' THEN 'MUŠKI'
+        WHEN t.gender = 'F' THEN 'ŽENSKI'
+        WHEN t.gender = 'U' THEN 'NEPOZNATO'
+        WHEN t.gender = 'R' THEN 'OSTALO'
+        ELSE 'NEPOZNATO'
+    END AS gender,
+    c.name AS Country, 
+    c.averagesalary AS average_salary
+FROM Trainers t
+JOIN Countries c ON c.countriesid = t.countryid;
 
 -- 2.UPIT
 SELECT 
