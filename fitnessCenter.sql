@@ -81,4 +81,28 @@ CREATE TABLE Schedule(
 	FOREIGN KEY (ActivityId) REFERENCES Activities(ActivitiesId)
 );
 ALTER TABLE Schedule
-	ADD CONSTRAINT CheckTime CHECK (StartingTime < EndingTime);
+	DROP COLUMN StartingTime,
+	DROP COLUMN EndingTime;
+ALTER TABLE Schedule
+	ADD COLUMN ActivityStart TIMESTAMP;
+
+
+CREATE OR REPLACE FUNCTION check_trainer_limit()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM TrainerActivity
+        WHERE TrainerId = NEW.TrainerId AND TypeOfTrainer = 'Glavni') > 2 THEN
+        RAISE EXCEPTION 'Trener moze biti glavni na max 2 aktivnosti';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER limit_trainer
+BEFORE INSERT OR UPDATE ON TrainerActivity
+FOR EACH ROW
+WHEN (NEW.TypeOfTrainer = 'Glavni')
+EXECUTE FUNCTION check_trainer_limit();
