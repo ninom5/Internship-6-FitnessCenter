@@ -2189,7 +2189,7 @@ insert into trainers (name, surname, birth, gender, countryid, fitnesscenterid) 
 insert into trainers (name, surname, birth, gender, countryid, fitnesscenterid) values ('Nerta', 'Poge', '1992-07-25', 'F', 19, 1029);
 insert into trainers (name, surname, birth, gender, countryid, fitnesscenterid) values ('Frieda', 'Isakson', '1970-10-31', 'F', 23, 742);
 insert into trainers(name, surname, birth, gender, countryid, fitnesscenterid) values ('Taylor', 'Mason', '1995-12-12', 'R', 1, 1);
-insert into trainers(name, surname, birth, gender, countryid, fitnesscenterid) values ('Ante', 'Antic', '1990-01-01', 'U', 1, 1)
+insert into trainers(name, surname, birth, gender, countryid, fitnesscenterid) values ('Ante', 'Antic', '1990-01-01', 'U', 1, 1);
 
 
 INSERT INTO ActivityType (typeofactivity)

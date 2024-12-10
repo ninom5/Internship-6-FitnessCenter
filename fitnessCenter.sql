@@ -58,7 +58,7 @@ CREATE TABLE Activities(
 	ActivitiesId SERIAL PRIMARY KEY,
 	TypeOfActivityId INT CHECK (TypeOfActivityId BETWEEN 1 AND 5),
 	Price INT Check (Price > 0),
-	FOREIGN KEY (TypeOfActivity) REFERENCES ActivityType(ActivityTypeId)
+	FOREIGN KEY (TypeOfActivityId) REFERENCES ActivityType(ActivityTypeId)
 );
 
 CREATE TABLE TrainerActivity(
@@ -96,7 +96,7 @@ ALTER TABLE Schedule
 	ADD COLUMN ActivityStart TIMESTAMP;
 ALTER TABLE Schedule
 	ADD COLUMN fitnesscenterid INT,
-	ADD CONSTRAINT fitnesscenterid_fk FOREIGN KEY (fitnesscenterid) REFERENCES FitnessCenters(fitnesscentersid)
+	ADD CONSTRAINT fitnesscenterid_fk FOREIGN KEY (fitnesscenterid) REFERENCES FitnessCenters(fitnesscentersid);
 
 CREATE OR REPLACE FUNCTION check_trainer_limit()
 RETURNS TRIGGER AS $$
