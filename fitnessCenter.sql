@@ -120,22 +120,32 @@ EXECUTE FUNCTION check_trainer_limit();
 
 
 
-CREATE OR REPLACE FUNCTION check_schedule_capacity()
+CREATE OR REPLACE FUNCTION check_activity_capacity()
 RETURNS TRIGGER AS $$
+DECLARE
+    current_capacity INT;
+    max_capacity INT;
 BEGIN
-    IF (SELECT COUNT(*) 
-        FROM ActivityUser 
-        WHERE ActivityId = NEW.ActivityId) >= 
-       (SELECT Capacity 
-        FROM Schedule 
-        WHERE ScheduleId = NEW.ActivityId) THEN
-        RAISE EXCEPTION 'Aktivnost je vec popunjena';
+    SELECT COUNT(*)
+    INTO current_capacity
+    FROM ActivityUser
+    WHERE ActivityId = NEW.ActivityId;
+
+    SELECT Capacity
+    INTO max_capacity
+    FROM Schedule
+    WHERE ScheduleId = NEW.ActivityId;
+
+    IF current_capacity >= max_capacity THEN
+        RAISE EXCEPTION 'Aktivnost id: % je vec popunjena. Trenutni kapacitet: %, maksimalni kapacitet: %',
+            NEW.ActivityId, current_capacity, max_capacity;
     END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER prevent_overbooking
-BEFORE INSERT ON ActivityUser
-FOR EACH ROW
-EXECUTE FUNCTION check_schedule_capacity();
+
+CREATE TRIGGER CheckCapacity BEFORE INSERT ON ActivityUser
+	FOR EACH ROW
+	EXECUTE FUNCTION check_activity_capacity();
