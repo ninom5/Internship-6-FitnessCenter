@@ -15,7 +15,7 @@ JOIN Countries c ON c.countriesid = t.countryid;
 -- 2.UPIT
 SELECT 
     at.typeofactivity AS "Naziv",
-    s.ActivityStart AS "Termin održavanja",
+    s.ActivityStart AS "Termin",
     STRING_AGG(
         CONCAT(t.Surname, ', ', LEFT(t.Name, 1), '.'),
         '; '

@@ -12548,7 +12548,7 @@ insert into activityuser (activityid, userid) values (1372, 1430);
 insert into activityuser (activityid, userid) values (355, 589);
 insert into activityuser (activityid, userid) values (1228, 752);
 insert into activityuser (activityid, userid) values (605, 1612);
-Sinsert into activityuser (activityid, userid) values (1461, 2006);
+insert into activityuser (activityid, userid) values (1461, 2006);
 insert into activityuser (activityid, userid) values (32, 991);
 insert into activityuser (activityid, userid) values (671, 1445);
 insert into activityuser (activityid, userid) values (591, 1481);
