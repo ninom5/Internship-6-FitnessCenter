@@ -85,7 +85,9 @@ ALTER TABLE Schedule
 	DROP COLUMN EndingTime;
 ALTER TABLE Schedule
 	ADD COLUMN ActivityStart TIMESTAMP;
-
+ALTER TABLE Schedule
+	ADD COLUMN fitnesscenterid INT,
+	ADD CONSTRAINT fitnesscenterid_fk FOREIGN KEY (fitnesscenterid) REFERENCES FitnessCenters(fitnesscentersid)
 
 CREATE OR REPLACE FUNCTION check_trainer_limit()
 RETURNS TRIGGER AS $$
