@@ -117,3 +117,25 @@ BEFORE INSERT OR UPDATE ON TrainerActivity
 FOR EACH ROW
 WHEN (NEW.TypeOfTrainer = 'Glavni')
 EXECUTE FUNCTION check_trainer_limit();
+
+
+
+CREATE OR REPLACE FUNCTION check_schedule_capacity()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT COUNT(*) 
+        FROM ActivityUser 
+        WHERE ActivityId = NEW.ActivityId) >= 
+       (SELECT Capacity 
+        FROM Schedule 
+        WHERE ScheduleId = NEW.ActivityId) THEN
+        RAISE EXCEPTION 'Aktivnost je vec popunjena';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER prevent_overbooking
+BEFORE INSERT ON ActivityUser
+FOR EACH ROW
+EXECUTE FUNCTION check_schedule_capacity();
