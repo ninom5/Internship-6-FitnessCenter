@@ -123,7 +123,6 @@ EXECUTE FUNCTION check_trainer_limit();
 CREATE OR REPLACE FUNCTION check_schedule_capacity()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Check the current number of users for the activity
     IF (SELECT COUNT(*) 
         FROM ActivityUser 
         WHERE ActivityId = NEW.ActivityId) >= 
@@ -133,12 +132,11 @@ BEGIN
         RAISE EXCEPTION 'Cannot add more users: Activity is full';
     END IF;
 
-    -- Allow the insertion if capacity is not reached
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER prevent_overbooking
 BEFORE INSERT ON ActivityUser
-FOR EACH ROW
-EXECUTE FUNCTION check_schedule_capacity();
+	FOR EACH ROW
+		EXECUTE FUNCTION check_schedule_capacity();
