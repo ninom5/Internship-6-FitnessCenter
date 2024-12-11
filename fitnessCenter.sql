@@ -81,13 +81,14 @@ ALTER TABLE ActivityUser
 	ADD CONSTRAINT ActivityUserUnique UNIQUE (ActivityId, UserId);
 
 CREATE TABLE Schedule(
-	ScheduleId SERIAL PRIMARY KEY,
-	Code INT UNIQUE NOT NULL,
+	Code INT PRIMARY KEY NOT NULL,
 	ActivityId INT NOT NULL,
 	StartingTime TIMESTAMP,
 	EndingTime TIMESTAMP,
 	Capacity INT CHECK (Capacity > 0),
-	FOREIGN KEY (ActivityId) REFERENCES Activities(ActivitiesId)
+	FitnessCenterId INT,
+	FOREIGN KEY (ActivityId) REFERENCES Activities(ActivitiesId),
+	FOREIGN KEY (FitnessCenterId) REFERENCES FitnessCenters(FitnessCentersId)
 );
 ALTER TABLE Schedule
 	DROP COLUMN StartingTime,
@@ -95,8 +96,7 @@ ALTER TABLE Schedule
 ALTER TABLE Schedule
 	ADD COLUMN ActivityStart TIMESTAMP;
 ALTER TABLE Schedule
-	ADD COLUMN fitnesscenterid INT,
-	ADD CONSTRAINT fitnesscenterid_fk FOREIGN KEY (fitnesscenterid) REFERENCES FitnessCenters(fitnesscentersid);
+	ADD CONSTRAINT uniqueCenterActivity UNIQUE(fitnesscenterid, activityid);
 
 CREATE OR REPLACE FUNCTION check_trainer_limit()
 RETURNS TRIGGER AS $$
@@ -122,30 +122,32 @@ EXECUTE FUNCTION check_trainer_limit();
 
 CREATE OR REPLACE FUNCTION check_activity_capacity()
 RETURNS TRIGGER AS $$
-DECLARE
-    current_capacity INT;
-    max_capacity INT;
 BEGIN
-    SELECT COUNT(*)
-    INTO current_capacity
-    FROM ActivityUser
-    WHERE ActivityId = NEW.ActivityId;
+    DECLARE
+        current_capacity INT;
+        current_user_count INT;
+        activity_id INT;
+    BEGIN
+        SELECT Capacity INTO current_capacity FROM Schedule
+        	WHERE ActivityId = NEW.ActivityId;
 
-    SELECT Capacity
-    INTO max_capacity
-    FROM Schedule
-    WHERE ScheduleId = NEW.ActivityId;
+        activity_id := NEW.ActivityId;
 
-    IF current_capacity >= max_capacity THEN
-        RAISE EXCEPTION 'Aktivnost id: % je vec popunjena. Trenutni kapacitet: %, maksimalni kapacitet: %',
-            NEW.ActivityId, current_capacity, max_capacity;
-    END IF;
+        SELECT COUNT(*) INTO current_user_count FROM ActivityUser
+        	WHERE ActivityId = NEW.ActivityId;
 
-    RETURN NEW;
+        IF current_user_count >= current_capacity THEN
+            RAISE EXCEPTION 'Aktivnost ID % je vec popunjena. Maksimalni kapacitet ove aktivnosti je %.', 
+                activity_id, current_capacity;
+        END IF;
+
+        RETURN NEW;
+    END;
 END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER CheckCapacity BEFORE INSERT ON ActivityUser
+CREATE TRIGGER check_capacity
+	BEFORE INSERT ON ActivityUser
 	FOR EACH ROW
-	EXECUTE FUNCTION check_activity_capacity();
+		EXECUTE FUNCTION check_activity_capacity();
