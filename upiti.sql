@@ -35,7 +35,7 @@ ORDER BY
 
 -- 3.UPIT
 
-SELECT fc.Name AS FitnessCenterName, COUNT(s.ScheduleId) AS BrojAktivnosti FROM FitnessCenters fc
+SELECT fc.Name AS FitnessCenterName, COUNT(s.Code) AS BrojAktivnosti FROM FitnessCenters fc
 JOIN Schedule s ON fc.FitnessCentersId = s.fitnesscenterid
 GROUP BY 
 	fc.Name
