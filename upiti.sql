@@ -78,25 +78,25 @@ WHERE s.ActivityStart BETWEEN '2019-01-01' AND '2022-12-31';
 
 -- 7.UPIT
 
-SELECT c.Name AS CountryName, at.TypeOfActivity AS ActivityType, ROUND(AVG(ParticipationCount), 2) AS AvgParticipation
+SELECT c.Name AS Country, at.TypeOfActivity, ROUND(AVG(sudjelovanja.TrenutnoSudionika), 2)
+	AS Average
 FROM Countries c
-JOIN (
-    SELECT fc.CountryId, 
-           at.TypeOfActivity, 
-           COUNT(au.UserId) AS ParticipationCount
-    FROM FitnessCenters fc
-    JOIN Users u ON u.FitnessCenterId = fc.FitnessCentersId
-    JOIN ActivityUser au ON au.UserId = u.UsersId
-    JOIN Activities a ON a.ActivitiesId = au.ActivityId
-    JOIN ActivityType at ON at.ActivityTypeId = a.TypeOfActivityId
-    GROUP BY fc.CountryId, at.TypeOfActivity
-) AS ParticipationCounts ON c.CountriesId = ParticipationCounts.CountryId
-JOIN ActivityType at ON at.TypeOfActivity = ParticipationCounts.TypeOfActivity
+JOIN FitnessCenters f ON c.CountriesId = f.CountryId
+JOIN Schedule s ON f.FitnessCentersId = s.FitnessCenterId
+JOIN Activities a ON s.ActivityId = a.ActivitiesId
+JOIN ActivityType at ON a.TypeOfActivityId = at.ActivityTypeId
+LEFT JOIN 
+    (SELECT 
+        au.ActivityId, 
+        COUNT(au.UserId) AS TrenutnoSudionika
+    FROM 
+        ActivityUser au
+    GROUP BY 
+        au.ActivityId) sudjelovanja ON a.ActivitiesId = sudjelovanja.ActivityId
 GROUP BY 
-	c.Name, at.TypeOfActivity
+    c.Name, at.TypeOfActivity
 ORDER BY 
-	c.Name, at.TypeOfActivity;
-
+    c.Name, at.TypeOfActivity;
 
 
 -- 8.UPIT
@@ -119,23 +119,23 @@ LIMIT 10;
 
 -- 9.UPIT
 
-SELECT a.ActivitiesId,
-       at.TypeOfActivity AS ActivityType,
-       COUNT(au.UserId) AS ParticipationCount,
-       s.Capacity,
-       CASE 
-           WHEN COUNT(au.UserId) < s.Capacity THEN 'IMA MJESTA'
-           ELSE 'POPUNJENO'
-       END AS Availability
+SELECT 
+	a.activitiesid, at.TypeOfActivity, f.Name AS FitnessCenterName,
+    COUNT(au.UserId) AS CurrentParticipants,
+    s.Capacity AS MaxCapacity,
+    CASE 
+        WHEN COUNT(au.UserId) < s.Capacity THEN 'IMA MJESTA'
+        ELSE 'POPUNJENO'
+    END AS Status
 FROM Activities a
-JOIN ActivityType at ON at.ActivityTypeId = a.TypeOfActivityId
-JOIN Schedule s ON s.ActivityId = a.ActivitiesId
-LEFT JOIN ActivityUser au ON au.ActivityId = a.ActivitiesId
+JOIN Schedule s ON a.ActivitiesId = s.ActivityId
+JOIN ActivityType at ON a.TypeOfActivityId = at.ActivityTypeId
+JOIN FitnessCenters f ON s.FitnessCenterId = f.FitnessCentersId
+LEFT JOIN ActivityUser au ON a.ActivitiesId = au.ActivityId
 GROUP BY 
-	a.ActivitiesId, at.TypeOfActivity, s.Capacity
-ORDER BY 
-	ParticipationCount DESC;
-
+    a.activitiesid, at.TypeOfActivity, f.Name, s.Capacity
+ORDER BY
+	CurrentParticipants DESC
 
 -- 10.UPIT
 
