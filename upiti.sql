@@ -73,7 +73,8 @@ SELECT DISTINCT t.trainersid, t.Name, t.Surname, ta.typeoftrainer FROM Trainers 
 JOIN TrainerActivity ta ON t.TrainersId = ta.TrainerId
 JOIN Activities a ON ta.ActivityId = a.ActivitiesId
 JOIN Schedule s ON s.ActivityId = a.ActivitiesId
-WHERE s.ActivityStart BETWEEN '2019-01-01' AND '2022-12-31';
+WHERE  
+    s.ActivityStart BETWEEN '2019-01-01' AND '2022-12-31';
 
 
 -- 7.UPIT
@@ -111,8 +112,10 @@ JOIN ActivityUser au ON au.UserId = u.UsersId
 JOIN Activities a ON a.ActivitiesId = au.ActivityId
 JOIN ActivityType at ON at.ActivityTypeId = a.TypeOfActivityId
 WHERE at.TypeOfActivity = 'injury rehabilitation'
-GROUP BY c.Name, at.TypeOfActivity
-ORDER BY Participations DESC
+GROUP BY 
+    c.Name, at.TypeOfActivity
+ORDER BY 
+    Participations DESC
 LIMIT 10;
 
 
